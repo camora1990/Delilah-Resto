@@ -6,14 +6,16 @@ const helmet = require("helmet");
 const dotenv = require("dotenv").config();
 const sequelize = require("./config/dbConnection");
 
+require('./config/dbConnection')
 const PORT = process.env.PORT || 3000;
 const app = express();
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-app.get("/Users", async (req, res) => {
-  let response = await sequelize.query("SELECT * FROM Dishes", {
+
+app.get("/users", async (req, res) => {
+  let response = await sequelize.query("SELECT * FROM users", {
     type: sequelize.QueryTypes.SELECT,
   });
   res.send(response);

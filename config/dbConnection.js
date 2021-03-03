@@ -1,9 +1,14 @@
 const { Sequelize, DataTypes } = require("sequelize");
+const dotenv = require("dotenv").config();
 
 const userModel = require("../models/users");
 const orderModel = require("../models/orders");
 const dishModel = require("../models/dishes");
 const orderDetailModel = require("../models/order_details");
+
+const BD_NAME = process.env.BD_NAME;
+const BD_USER = process.env.BD_USER;
+const BD_PASSWORD = process.env.BD_PASSWORD;
 
 const sequelize = new Sequelize(
   "OnlineOrderingSystem",

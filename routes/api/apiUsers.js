@@ -6,7 +6,7 @@ const { body, validationResult, check } = require("express-validator");
 //model inmport to dbConnectionJS
 const { usersEntity } = require("../../config/dbConnection");
 
-//createdToken
+//create Token
 
 const createToken = (user) => {
   const payLoad = {
@@ -17,7 +17,6 @@ const createToken = (user) => {
 };
 
 //middelwares
-
 async function validateRegisterUser(req, res, next) {
   let user = await usersEntity.findAll({ where: { email: req.body.email } });
   if (user.length > 0) {
@@ -55,9 +54,28 @@ async function validateUserCredential(req, res, next) {
   }
 }
 
+function validateTokenAdmin(req, res, next) {
+  let token = req.headers.authorization.split(" ")[1];
+  let isValid = jsonWebToken.verify(token, process.env.PRIVATE_KEY);
+  if (isValid) {
+    if (isValid.user.is_admin) {
+      next();
+    } else {
+      res.status(401).json({
+        status: 401,
+        msg: "You need administrator permissions!!",
+      });
+    }
+  } else {
+    res.status(401).json({
+      status: 401,
+      msg: "Invalid token!!",
+    });
+  }
+}
 // end middelWares
 
-router.get("/", async (req, res) => {
+router.get("/", validateTokenAdmin, async (req, res) => {
   let users = await usersEntity.findAll({
     attributes: [
       "id",
@@ -75,7 +93,7 @@ router.get("/", async (req, res) => {
       status: 200,
       msg: "OK",
     },
-    users,
+    data: users,
   });
 });
 

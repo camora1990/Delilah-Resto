@@ -6,23 +6,56 @@ const { body, validationResult, check } = require("express-validator");
 //model inmport to dbConnectionJS
 const { usersEntity } = require("../../config/dbConnection");
 
+//createdToken
+
+const createToken = (user) => {
+  const payLoad = {
+    user: user,
+  };
+  let token = jsonWebToken.sign(payLoad, process.env.PRIVATE_KEY);
+  return token;
+};
 
 //middelwares
 
 async function validateRegisterUser(req, res, next) {
-
-  let user = await usersEntity.findAll({where: {email: req.body.email }})
-  if (user.length>0) {
+  let user = await usersEntity.findAll({ where: { email: req.body.email } });
+  if (user.length > 0) {
     res.status(200).json({
       status: 200,
-      msg: `the user ${req.body.email} is registered in the database`
-    })
-  }else{
-    next()
+      msg: `the user ${req.body.email} is registered in the database`,
+    });
+  } else {
+    next();
   }
-  
 }
 
+async function validateUserCredential(req, res, next) {
+  let user = await usersEntity.findOne({ where: { email: req.body.email } });
+
+  if (user) {
+    let comparedPassword = bcrypt.compareSync(
+      req.body.login_password,
+      user.login_password
+    );
+
+    if (comparedPassword) {
+      next();
+    } else {
+      res.status(401.1).json({
+        status: 401.1,
+        msg: "Invalid password!!",
+      });
+    }
+  } else {
+    res.json({
+      status: 204,
+      msg: "user not found!!",
+    });
+  }
+}
+
+// end middelWares
 
 router.get("/", async (req, res) => {
   let users = await usersEntity.findAll({
@@ -42,17 +75,18 @@ router.get("/", async (req, res) => {
       status: 200,
       msg: "OK",
     },
-    data: users,
+    users,
   });
-
 });
-
 
 router.post(
   "/registerUser",
   [
     check("email", "Enter valid email!!").isEmail().not().isEmpty(),
-    check("login_password").not().isEmpty().withMessage("Required")
+    check("login_password")
+      .not()
+      .isEmpty()
+      .withMessage("Required")
       .isLength({ min: 6 })
       .withMessage("must be at least 5 chars long!!")
       .matches(/\d/)
@@ -64,11 +98,10 @@ router.post(
   validateRegisterUser,
 
   async (req, res) => {
-
     const error = validationResult(req);
     if (!error.isEmpty()) {
       return res.status(422).json({
-        status:422,
+        status: 422,
         error: error.array(),
       });
     }
@@ -88,5 +121,20 @@ router.post(
     });
   }
 );
+
+router.post("/login", validateUserCredential, async (req, res) => {
+  let user = await usersEntity.findOne({
+    attributes: ["first_name", "last_name", "is_admin"],
+    where: { email: req.body.email },
+  });
+  let token = createToken(user);
+  res.status(200).json({
+    meta: {
+      status: 200,
+      msg: "OK",
+    },
+    token,
+  });
+});
 
 module.exports = router;

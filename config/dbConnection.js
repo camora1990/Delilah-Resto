@@ -15,8 +15,7 @@ const sequelize = new Sequelize(
     port: 1433,
     dialectOptions: {
       useUTC: true,
-    },
-    timezone: "+02:00",
+    }
   }
 );
 

@@ -1,3 +1,5 @@
+const moment = require('moment')
+
 module.exports = (sequelize, DataTypes) => {
   return sequelize.define("user", {
     id: {
@@ -34,9 +36,6 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.BOOLEAN,
       allowNull: false,
       defaultValue: false,
-    }
+    },
   });
 };
-
-
-

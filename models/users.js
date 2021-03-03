@@ -1,18 +1,17 @@
-module.exports = (sequelize, DataTypes ) => {
-    
+module.exports = (sequelize, DataTypes) => {
   return sequelize.define("user", {
     id: {
-      type: DataTypes .INTEGER,
+      type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true,
       autoIncrement: true,
     },
     first_name: {
-      type: DataTypes .STRING(50),
+      type: DataTypes.STRING(50),
       allowNull: false,
     },
     last_name: {
-      type: DataTypes .STRING(70),
+      type: DataTypes.STRING(70),
       allowNull: false,
     },
     email: {
@@ -22,18 +21,22 @@ module.exports = (sequelize, DataTypes ) => {
       isEmail: true,
     },
     phone_number: {
-      type: DataTypes .STRING(10),
+      type: DataTypes.STRING(10),
     },
     home_address: {
-      type: DataTypes .STRING(20),
+      type: DataTypes.STRING(20),
     },
     login_password: {
-      type: DataTypes .STRING(50),
+      type: DataTypes.STRING,
       allowNull: false,
     },
     is_admin: {
-      type: DataTypes .BOOLEAN,
+      type: DataTypes.BOOLEAN,
       allowNull: false,
-    },
+      defaultValue: false,
+    }
   });
 };
+
+
+

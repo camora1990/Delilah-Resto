@@ -1,5 +1,4 @@
 module.exports = (sequelize, DataTypes) => {
-    
   return sequelize.define("order", {
     id: {
       type: DataTypes.INTEGER,
@@ -13,6 +12,7 @@ module.exports = (sequelize, DataTypes) => {
       isIn: [
         ["NEW", "CONFIRMED", "PREPARING", "SENT", "CANCELLED", "DELIVERED"],
       ],
+      defaultValue: "NEW",
     },
     payment_method: {
       type: DataTypes.STRING(20),

@@ -19,5 +19,9 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       isIn: [["CARD", "CASH"]],
     },
+    total:{
+      type: DataTypes.INTEGER,
+      allowNull: false
+    }
   });
 };

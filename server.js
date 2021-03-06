@@ -13,14 +13,14 @@ app.use(cors());
 app.use(helmet());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-app.use(
-  expressJwt({
-    secret: process.env.PRIVATE_KEY,
-    algorithms: ["sha1", "RS256", "HS256"],
-  }).unless({
-    path: ["/apiv1/users/login", "/apiv1/users/registerUser"],
-  })
-);
+// app.use(
+//   expressJwt({
+//     secret: process.env.PRIVATE_KEY,
+//     algorithms: ["sha1", "RS256", "HS256"],
+//   }).unless({
+//     path: ["/apiv1/users/login", "/apiv1/users/registerUser"],
+//   })
+// );
 
 app.use("/apiv1", apiRouter);
 

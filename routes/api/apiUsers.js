@@ -1,7 +1,12 @@
 const router = require("express").Router();
-const bcrypt = require("bcrypt");
 const jsonWebToken = require("jsonWebToken");
+const bcrypt = require("bcrypt");
 const { body, validationResult, check } = require("express-validator");
+const {
+  validateRegisterUser,
+  validateUserCredential,
+  validateToken,
+} = require("../middlewares");
 
 //model inmport to dbConnectionJS
 const { usersEntity } = require("../../config/dbConnection");
@@ -16,85 +21,33 @@ const createToken = (user) => {
   return token;
 };
 
-//middelwares
-async function validateRegisterUser(req, res, next) {
-  let user = await usersEntity.findAll({ where: { email: req.body.email } });
-  if (user.length > 0) {
+router.get("/", validateToken, async (req, res) => {
+  if (req.body.is_admin) {
+    let users = await usersEntity.findAll({
+      attributes: [
+        "id",
+        "first_name",
+        "last_name",
+        "email",
+        "phone_number",
+        "home_address",
+        "is_admin",
+      ],
+    });
+
     res.status(200).json({
-      status: 200,
-      msg: `the user ${req.body.email} is registered in the database`,
+      meta: {
+        status: 200,
+        msg: "OK",
+      },
+      data: users,
     });
-  } else {
-    next();
-  }
-}
-
-async function validateUserCredential(req, res, next) {
-  let user = await usersEntity.findOne({ where: { email: req.body.email } });
-
-  if (user) {
-    let comparedPassword = bcrypt.compareSync(
-      req.body.login_password,
-      user.login_password
-    );
-
-    if (comparedPassword) {
-      next();
-    } else {
-      res.status(401.1).json({
-        status: 401.1,
-        msg: "Invalid password!!",
-      });
-    }
-  } else {
-    res.json({
-      status: 204,
-      msg: "user not found!!",
-    });
-  }
-}
-
-function validateTokenAdmin(req, res, next) {
-  let token = req.headers.authorization.split(" ")[1];
-  let isValid = jsonWebToken.verify(token, process.env.PRIVATE_KEY);
-  if (isValid) {
-    if (isValid.user.is_admin) {
-      next();
-    } else {
-      res.status(401).json({
-        status: 401,
-        msg: "You need administrator permissions!!",
-      });
-    }
   } else {
     res.status(401).json({
       status: 401,
-      msg: "Invalid token!!",
+      msg: "You need administrator permissions!!",
     });
   }
-}
-// end middelWares
-
-router.get("/", validateTokenAdmin, async (req, res) => {
-  let users = await usersEntity.findAll({
-    attributes: [
-      "id",
-      "first_name",
-      "last_name",
-      "email",
-      "phone_number",
-      "home_address",
-      "is_admin",
-    ],
-  });
-
-  res.status(200).json({
-    meta: {
-      status: 200,
-      msg: "OK",
-    },
-    data: users,
-  });
 });
 
 router.post(
@@ -141,11 +94,7 @@ router.post(
 );
 
 router.post("/login", validateUserCredential, async (req, res) => {
-  let user = await usersEntity.findOne({
-    attributes: ["first_name", "last_name", "is_admin"],
-    where: { email: req.body.email },
-  });
-  let token = createToken(user);
+  let token = createToken(req.body.userToken);
   res.status(200).json({
     meta: {
       status: 200,

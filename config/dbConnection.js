@@ -10,10 +10,11 @@ const BD_NAME = process.env.BD_NAME;
 const BD_USER = process.env.BD_USER;
 const BD_PASSWORD = process.env.BD_PASSWORD;
 
+
 const sequelize = new Sequelize(
-  "OnlineOrderingSystem",
-  "Camorasa",
-  "M0r4l3s1027",
+  BD_NAME,
+  BD_USER,
+  BD_PASSWORD,
   {
     dialect: "mssql",
     host: "localhost",

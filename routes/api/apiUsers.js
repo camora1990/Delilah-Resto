@@ -6,6 +6,7 @@ const {
   validateRegisterUser,
   validateUserCredential,
   validateToken,
+  validateIsAdim,
 } = require("../middlewares");
 
 //model inmport to dbConnectionJS
@@ -17,37 +18,32 @@ const createToken = (user) => {
   const payLoad = {
     user: user,
   };
-  let token = jsonWebToken.sign(payLoad, process.env.PRIVATE_KEY);
+  let token = jsonWebToken.sign(payLoad, process.env.PRIVATE_KEY, {
+    expiresIn: 300,
+  });
   return token;
 };
 
-router.get("/", validateToken, async (req, res) => {
-  if (req.body.is_admin) {
-    let users = await usersEntity.findAll({
-      attributes: [
-        "id",
-        "first_name",
-        "last_name",
-        "email",
-        "phone_number",
-        "home_address",
-        "is_admin",
-      ],
-    });
+router.get("/", validateToken, validateIsAdim, async (req, res) => {
+  let users = await usersEntity.findAll({
+    attributes: [
+      "id",
+      "first_name",
+      "last_name",
+      "email",
+      "phone_number",
+      "home_address",
+      "is_admin",
+    ],
+  });
 
-    res.status(200).json({
-      meta: {
-        status: 200,
-        msg: "OK",
-      },
-      data: users,
-    });
-  } else {
-    res.status(401).json({
-      status: 401,
-      msg: "You need administrator permissions!!",
-    });
-  }
+  res.status(200).json({
+    meta: {
+      status: 200,
+      msg: "OK",
+    },
+    data: users,
+  });
 });
 
 router.post(

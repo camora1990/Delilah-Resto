@@ -1,11 +1,11 @@
-POST:/api/users/registerUser
-GET:/api/users/
-GET:/api/dishes/
-POST:api/orders/newOrder
-PUT/:ID:api/orders/updateOrder
-POST:api/dishes/createDish
-PUT/:ID:/api/dishes/updateDish
-DELETE/:ID:/api/dishes/deleteDish
+POST:/apiv1/users/registerUser
+GET:/apiv1/users/
+GET:/apiv1/dishes/
+POST:apiv1/orders/newOrder
+PUT/:ID:apiv1/orders/updateOrder
+POST:apiv1/dishes/createDish
+PUT/:ID:/apiv1/dishes/updateDish
+DELETE/:ID:/apiv1/dishes/deleteDish
 
 
 

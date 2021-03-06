@@ -1,7 +1,7 @@
 const { usersEntity } = require("../config/dbConnection");
 const bcrypt = require("bcrypt");
 const jsonWebToken = require("jsonWebToken");
-const { body } = require("express-validator");
+
 
 /*
 functions: Validates if user is registered in the data base
@@ -79,6 +79,10 @@ function validateToken(req, res, next) {
     return res.status(401).send({
       status: 401,
       message: "Invalid token!!",
+      error: {
+        name: error.name,
+        message: error.message,
+      },
     });
   }
 
@@ -86,8 +90,30 @@ function validateToken(req, res, next) {
   next();
 }
 
+
+/*
+functions: validate if user is admin
+Author: Camilo Morales Sanchez.
+Event: invoked from:
+apiUser endpoint/apiv1/users/
+apiDishes endpoints all
+*/
+
+function validateIsAdim(req,res,next) {
+  if (req.body.is_admin) {
+    next()
+  } else {
+    return res.status(401).json({
+      status: 401,
+      msg: "You need administrator permissions!!",
+    });
+  }
+}
+
 module.exports = {
   validateRegisterUser,
   validateUserCredential,
   validateToken,
+  validateIsAdim
+  
 };

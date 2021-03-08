@@ -19,7 +19,7 @@ const createToken = (user) => {
     user: user,
   };
   let token = jsonWebToken.sign(payLoad, process.env.PRIVATE_KEY, {
-    expiresIn: 300,
+    expiresIn: 60 * 60 * 24,
   });
   return token;
 };
@@ -40,7 +40,7 @@ router.get("/", validateToken, validateIsAdim, async (req, res) => {
   res.status(200).json({
     meta: {
       status: 200,
-      msg: "OK",
+      message: "OK",
     },
     data: users,
   });
@@ -78,7 +78,7 @@ router.post(
     res.status(201).json({
       meta: {
         status: 201,
-        msg: "user created successfully",
+        message: "user created successfully",
       },
       data: {
         id: createUser.id,
@@ -94,7 +94,7 @@ router.post("/login", validateUserCredential, async (req, res) => {
   res.status(200).json({
     meta: {
       status: 200,
-      msg: "OK",
+      message: "OK",
     },
     token,
   });

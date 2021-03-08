@@ -1,15 +1,19 @@
 const router = require("express").Router();
-const {validationResult, check } = require("express-validator");
+const { validationResult, check, param, body } = require("express-validator");
 
 const { dishEntity } = require("../../config/dbConnection");
-const { validateIsAdim, validateToken } = require("../middlewares");
+const {
+  validateIsAdim,
+  validateToken,
+  validateDish,
+} = require("../middlewares");
 
 router.get("/", validateToken, validateIsAdim, async (req, res) => {
   let dishes = await dishEntity.findAll();
   res.status(200).json({
     meta: {
       status: 200,
-      msg: "OK",
+      message: "OK",
     },
     dishes,
   });
@@ -46,27 +50,95 @@ router.post(
     res.status(200).json({
       meta: {
         status: 200,
-        msg: "OK",
+        message: "OK",
       },
       dish,
     });
   }
 );
 
+router.put(
+  "/updateDish/:id",
+  [
+    param("id")
+      .not()
+      .isEmpty()
+      .withMessage("id is required!!")
+      .isInt()
+      .withMessage("Invalid type to Id!!"),
+  ],
+  validateToken,
+  validateIsAdim,
+  validateDish,
+  async (req, res) => {
+    const error = validationResult(req);
+    if (!error.isEmpty()) {
+      return res.status(422).json({
+        status: 422,
+        error: error.array(),
+      });
+    }
+    delete req.body.is_admin;
+    delete req.body.dish;
+    console.log(req.body);
+    let dish;
+    try {
+      dish = await dishEntity.update(req.body, {
+        where: { id: req.params.id },
+      });
+      res.status(200).json({
+        meta: {
+          status: 200,
+          message: "Dish was update successfully",
+        },
+        dish: await dishEntity.findOne({where:{id:req.params.id}}),
+      });
+    } catch (error) {
+      res.status(400).json({
+        meta: {
+          status: 400,
+          message: "Error",
+        },
+        error,
+      });
+    }
+  }
+);
+
 router.delete(
   "/deleteDish/:id",
-  // [
-  //   param("id")
-  //     .not()
-  //     .isEmpty()
-  //     .withMessage("id is required")
-  //     .isInt()
-  //     .withMessage("Invalid type to Id!!"),
-  // ],
-
+  [
+    param("id")
+      .not()
+      .isEmpty()
+      .withMessage("id is required")
+      .isInt()
+      .withMessage("Invalid type to Id!!"),
+  ],
+  validateToken,
+  validateIsAdim,
+  validateDish,
   async (req, res) => {
-    // const error = validationResult(req);
-    res.json({msg:"msg"});
+    const error = validationResult(req);
+    if (!error.isEmpty()) {
+      return res.status(422).json({
+        status: 422,
+        error: error.array(),
+      });
+    }
+
+    await dishEntity.destroy({
+      where: {
+        id: req.params.id,
+      },
+    });
+    res.status(200).json({
+      meta: {
+        status: 200,
+        message: "Dish was removed successfully!!",
+      },
+      dish: req.body.dish,
+    });
   }
 );
 

@@ -4,7 +4,7 @@ GET:/apiv1/dishes/
 POST:apiv1/orders/newOrder
 PUT/:ID:apiv1/orders/updateOrder
 POST:apiv1/dishes/createDish
-PUT/:ID:/apiv1/dishes/updateDish
+PUT/:ID:/apiv1/dishes/updateDish/
 DELETE/:ID:/apiv1/dishes/deleteDish
 
 

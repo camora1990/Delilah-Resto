@@ -5,6 +5,7 @@ const helmet = require("helmet");
 const apiRouter = require("./routes/api");
 const dotenv = require("dotenv").config();
 const expressJwt = require("express-jwt");
+const router = require("express").Router();
 
 const PORT = process.env.PORT || 3000;
 const app = express();
@@ -13,6 +14,7 @@ app.use(cors());
 app.use(helmet());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.use(router)
 // app.use(
 //   expressJwt({
 //     secret: process.env.PRIVATE_KEY,

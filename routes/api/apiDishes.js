@@ -8,7 +8,27 @@ const {
   validateDish,
 } = require("../middlewares");
 
-router.get("/", validateToken, validateIsAdim, async (req, res) => {
+let validatorCreateDish = [
+  check("name_dish", "Name dish is required!!").not().isEmpty(),
+  check("price")
+    .not()
+    .isEmpty()
+    .withMessage("Precie is required!!")
+    .isNumeric()
+    .withMessage("The price must be numerical!!"),
+  check("description", "Description is required!!").not().isEmpty(),
+];
+
+let validatorParamId = [
+  param("id")
+    .not()
+    .isEmpty()
+    .withMessage("id is required!!")
+    .isInt()
+    .withMessage("Invalid type to Id!!"),
+];
+
+router.get("/", validateToken, async (req, res) => {
   let dishes = await dishEntity.findAll();
   res.status(200).json({
     meta: {
@@ -21,16 +41,7 @@ router.get("/", validateToken, validateIsAdim, async (req, res) => {
 
 router.post(
   "/createDish",
-  [
-    check("name_dish", "Name dish is required!!").not().isEmpty(),
-    check("price")
-      .not()
-      .isEmpty()
-      .withMessage("Precie is required!!")
-      .isNumeric()
-      .withMessage("The price must be numerical!!"),
-    check("description", "Description is required!!").not().isEmpty(),
-  ],
+  validatorCreateDish,
   validateToken,
   validateIsAdim,
   async (req, res) => {
@@ -59,14 +70,7 @@ router.post(
 
 router.put(
   "/updateDish/:id",
-  [
-    param("id")
-      .not()
-      .isEmpty()
-      .withMessage("id is required!!")
-      .isInt()
-      .withMessage("Invalid type to Id!!"),
-  ],
+  validatorParamId,
   validateToken,
   validateIsAdim,
   validateDish,
@@ -80,7 +84,7 @@ router.put(
     }
     delete req.body.is_admin;
     delete req.body.dish;
-    console.log(req.body);
+    delete req.body.userId
     let dish;
     try {
       dish = await dishEntity.update(req.body, {
@@ -91,7 +95,7 @@ router.put(
           status: 200,
           message: "Dish was update successfully",
         },
-        dish: await dishEntity.findOne({where:{id:req.params.id}}),
+        dish: await dishEntity.findOne({ where: { id: req.params.id } }),
       });
     } catch (error) {
       res.status(400).json({
@@ -107,14 +111,7 @@ router.put(
 
 router.delete(
   "/deleteDish/:id",
-  [
-    param("id")
-      .not()
-      .isEmpty()
-      .withMessage("id is required")
-      .isInt()
-      .withMessage("Invalid type to Id!!"),
-  ],
+  validatorParamId,
   validateToken,
   validateIsAdim,
   validateDish,

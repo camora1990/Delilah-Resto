@@ -13,7 +13,6 @@ const {
 const { usersEntity } = require("../../config/dbConnection");
 
 //create Token
-
 const createToken = (user) => {
   const payLoad = {
     user: user,
@@ -23,6 +22,20 @@ const createToken = (user) => {
   });
   return token;
 };
+
+let validator = [
+  check("email", "Enter valid email!!").isEmail().not().isEmpty(),
+  check("login_password")
+    .not()
+    .isEmpty()
+    .withMessage("Required")
+    .isLength({ min: 6 })
+    .withMessage("must be at least 5 chars long!!")
+    .matches(/\d/)
+    .withMessage("must contain a number!!"),
+  check("home_address", "home address is required!!").not().isEmpty(),
+  check("first_name", "First name is required!!").not().isEmpty(),
+];
 
 router.get("/", validateToken, validateIsAdim, async (req, res) => {
   let users = await usersEntity.findAll({
@@ -48,22 +61,8 @@ router.get("/", validateToken, validateIsAdim, async (req, res) => {
 
 router.post(
   "/registerUser",
-  [
-    check("email", "Enter valid email!!").isEmail().not().isEmpty(),
-    check("login_password")
-      .not()
-      .isEmpty()
-      .withMessage("Required")
-      .isLength({ min: 6 })
-      .withMessage("must be at least 5 chars long!!")
-      .matches(/\d/)
-      .withMessage("must contain a number!!"),
-    check("home_address", "home address is required!!").not().isEmpty(),
-    check("first_name", "First name is required!!").not().isEmpty(),
-  ],
-
+  validator,
   validateRegisterUser,
-
   async (req, res) => {
     const error = validationResult(req);
     if (!error.isEmpty()) {

@@ -44,6 +44,7 @@ async function validateUserCredential(req, res, next) {
         last_name: user.last_name,
         is_admin: user.is_admin,
         email: user.email,
+        id: user.id,
       };
       next();
     } else {
@@ -93,6 +94,7 @@ function validateToken(req, res, next) {
   }
 
   req.body.is_admin = isvalid.user.is_admin;
+  req.body.userId = isvalid.user.id;
   next();
 }
 

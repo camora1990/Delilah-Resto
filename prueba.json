@@ -1,19 +1,22 @@
 {
   "order": {
-    "method": "CARD",
-    "user": 1,
+    "payment_method": "CARD",
     "dishes": [
       {
-        "id": 1
+        "id": 1,
+        "quantity": 1
       },
       {
-        "id": 2
+        "id": 2,
+        "quantity": 1
       },
       {
-        "id": 3
+        "id": 3,
+        "quantity": 1
       },
       {
-        "id": 4
+        "id": 4,
+        "quantity": 1
       }
     ]
   }

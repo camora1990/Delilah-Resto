@@ -2,10 +2,10 @@ POST:/apiv1/users/registerUser
 GET:/apiv1/users/
 GET:/apiv1/dishes/
 POST:apiv1/orders/newOrder
-PUT/:ID:apiv1/orders/updateOrder
+PUT/:ID:apiv1/orders/updateOrder/:id
 POST:apiv1/dishes/createDish
-PUT/:ID:/apiv1/dishes/updateDish/
-DELETE/:ID:/apiv1/dishes/deleteDish
+PUT/:ID:/apiv1/dishes/updateDish/:id
+DELETE/:ID:/apiv1/dishes/deleteDish/:id
 
 
 

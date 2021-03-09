@@ -29,3 +29,39 @@ app.use("/apiv1", apiRouter);
 app.listen(PORT, () => {
   console.log(`Server listening at port ${PORT}`);
 });
+
+
+var d =[
+  {
+    dish_name: 'Bagel de salmon',
+    price: 425,
+    quantity: 3,
+    total: 1275,
+    dish_id: 1,
+    order_id: 4
+  },
+  {
+    dish_name: 'Hamburguesa clasica',
+    price: 350,
+    quantity: 5,
+    total: 1750,
+    dish_id: 2,
+    order_id: 4
+  },
+  {
+    dish_name: 'Sandwich veggie',
+    price: 310,
+    quantity: 2,
+    total: 620,
+    dish_id: 3,
+    order_id: 4
+  },
+  {
+    dish_name: 'Ensalda veggie',
+    price: 340,
+    quantity: 1,
+    total: 340,
+    dish_id: 4,
+    order_id: 4
+  }
+]

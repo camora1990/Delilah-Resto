@@ -55,7 +55,7 @@ router.get("/", validateToken, validateIsAdim, async (req, res) => {
       status: 200,
       message: "OK",
     },
-    data: users,
+    users: users,
   });
 });
 
@@ -79,7 +79,7 @@ router.post(
         status: 201,
         message: "user created successfully",
       },
-      data: {
+      user: {
         id: createUser.id,
         fullName: `${createUser.first_name} ${createUser.last_name}`,
         user: createUser.email,

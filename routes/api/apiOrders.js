@@ -1,14 +1,30 @@
 const router = require("express").Router();
 
 //model inmport to dbConnectionJS
-const {
-  orderEntity,
-  orderDetailEntity,
-  dishEntity,
-} = require("../../config/dbConnection");
+const { orderEntity, orderDetailEntity } = require("../../config/dbConnection");
 
-const { validateToken, validateIsAdim } = require("../middlewares");
-const { check, validationResult } = require("express-validator");
+const {
+  validateToken,
+  validateIsAdim,
+  validateDishes,
+} = require("../middlewares");
+const { check, validationResult, param } = require("express-validator");
+
+let validatorUpdateDish = [
+  param("id")
+    .not()
+    .isEmpty()
+    .withMessage("id is required!!")
+    .isNumeric()
+    .withMessage("Invalid type to Id!!"),
+  check("order_status")
+    .not()
+    .isEmpty()
+    .isIn(["CONFIRMED", "PREPARING", "SENT", "CANCELLED", "DELIVERED"])
+    .withMessage(
+      "Invalid options [CONFIRMED or PREPARING or SENT or CANCELLED or DELIVERED ]"
+    ),
+];
 
 let validator = [
   check("order").not().isEmpty().withMessage("Order is required"),
@@ -23,53 +39,113 @@ let validator = [
     .withMessage("The dishes are required!!"),
 ];
 
-router.post("/newOrder", validator, validateToken, async (req, res) => {
-  const error = validationResult(req);
-  if (!error.isEmpty()) {
-    return res.status(422).json({
-      status: 422,
-      error: error.array(),
+router.post(
+  "/newOrder",
+  validator,
+  validateToken,
+  validateDishes,
+  async (req, res) => {
+    const error = validationResult(req);
+    if (!error.isEmpty()) {
+      return res.status(422).json({
+        status: 422,
+        error: error.array(),
+      });
+    }
+    const newOrder = await orderEntity.create({
+      user_id: req.body.userId,
+      payment_method: req.body.order.payment_method,
+      total: req.body.order.total,
+    });
+
+    const dishes = req.body.order.dishes;
+
+    dishes.forEach((dish) => {
+      dish.order_id = newOrder.id;
+    });
+
+    await orderDetailEntity.bulkCreate(dishes);
+
+    res.status(200).json({
+      meta: {
+        status: 200,
+        message: "Order was create successfully!!",
+      },
+      order: newOrder,
     });
   }
+);
 
-  let totalOrder = 0;
-  const newOrder = await orderEntity.create({
-    user_id: req.body.userId,
-    payment_method: req.body.order.payment_method,
-  });
+router.put(
+  "/updateOrder/:id",
+  validatorUpdateDish,
+  validateToken,
+  validateIsAdim,
+  async (req, res) => {
+    const error = validationResult(req);
 
-  const dishes = req.body.order.dishes;
+    if (!error.isEmpty()) {
+      return res.status(422).json({
+        status: 422,
+        error: error.array(),
+      });
+    }
+    await orderEntity.update(
+      { order_status: req.body.order_status },
+      { where: { id: req.params.id } }
+    );
 
-  for (let i = 0; i < dishes.length; i++) {
-    let tempDish = await dishEntity.findOne({ where: { id: dishes[i].id } });
-    let orderDetails = await orderDetailEntity.create({
-      dish_name: tempDish.name_dish,
-      price: tempDish.price,
-      quantity: dishes[i].quantity,
-      total: tempDish.price * dishes[i].quantity,
-      dish_id: dishes[i].id,
-      order_id: newOrder.id,
+    let order = await orderEntity.findOne({
+      attributes: ["id", "order_status", "payment_method", "total"],
+      where: { id: req.params.id },
     });
-    totalOrder += orderDetails.total;
+    res.status(200).json({
+      meta: {
+        status: 200,
+        message: "Order was update successfully!!",
+      },
+      order,
+    });
   }
+);
 
-  await orderEntity.update(
-    { total: totalOrder },
-    { where: { id: newOrder.id } }
-  );
+router.get(
+  "/:id",
+  [
+    param("id")
+      .not()
+      .isEmpty()
+      .withMessage("id is required!!")
+      .isNumeric()
+      .withMessage("Invalid type to Id!!"),
+  ],
+  validateToken,
+  validateIsAdim,
+  async (req, res) => {
+    const error = validationResult(req);
+    if (!error.isEmpty()) {
+      return res.status(422).json({
+        status: 422,
+        error: error.array(),
+      });
+    }
+    let order = await orderEntity.findOne({
+      attributes: ["id", "order_status", "payment_method", "total"],
+      where: { id: req.params.id },
+    });
+    order.dataValues.ditails = await orderDetailEntity.findAll({
+      attributes: ["dish_name", "price", "quantity", "total"],
+      where: { order_id: req.params.id },
+    });
+    res.status(200).json({
+      meta: {
+        status: 200,
+        message: "Ok",
+      },
 
-  res.status(200).json({
-    meta: {
-      status: 200,
-      message: "Order was create successfully!!",
-    },
-    order: await orderEntity.findOne({ where: { id: newOrder.id } }),
-  });
-});
-
-
-router.put("/updateOrder/:id",validateToken,validateIsAdim, async(req,res)=>{
-  
-})
+      order,
+    });
+  }
+);
 
 module.exports = router;

@@ -48,14 +48,14 @@ async function validateUserCredential(req, res, next) {
       };
       next();
     } else {
-      res.status(401.1).json({
+      return res.status(401.1).json({
         status: 401.1,
         message: "Invalid password!!",
       });
     }
   } else {
-    res.json({
-      status: 204,
+    return res.status(200).json({
+      status: 200,
       message: "user not found!!",
     });
   }
@@ -84,8 +84,9 @@ function validateToken(req, res, next) {
     isvalid = jsonWebToken.verify(token, process.env.PRIVATE_KEY);
   } catch (error) {
     return res.status(401).send({
+      meta:{
       status: 401,
-      message: "Invalid token!!",
+      message: "Invalid token!!"},
       error: {
         name: error.name,
         message: error.message,
@@ -148,10 +149,49 @@ async function validateDish(req, res, next) {
   }
 }
 
+/*
+functions: validate if dishes is in data base and are correct data
+Author: Camilo Morales Sanchez.
+Event: invoked from:
+apiOrders endpoint/apiv1/orders/newOrder"
+*/
+
+async function validateDishes(req, res, next) {
+  let dishes = req.body.order.dishes;
+  let totalOrder = 0;
+  for (let i = 0; i < dishes.length; i++) {
+    try {
+      let tempDish = await dishEntity.findOne({ where: { id: dishes[i].id } });
+      if (tempDish) {
+        dishes[i] = {
+          dish_name: tempDish.name_dish,
+          price: tempDish.price,
+          quantity: dishes[i].quantity,
+          total: tempDish.price * dishes[i].quantity,
+          dish_id: dishes[i].id,
+          order_id: null,
+        };
+        totalOrder += tempDish.price * dishes[i].quantity;
+      } else {
+        return res.status(20).json({
+          status: 200,
+          message: `Dish with id:${dishes[i].id} is not in data base`,
+        });
+      }
+    } catch (error) {
+      return res.status(400).json({ status: 400, message: "Failed", error });
+    }
+  }
+  req.body.order.dishes = dishes;
+  req.body.order.total = totalOrder;
+  next();
+}
+
 module.exports = {
   validateRegisterUser,
   validateUserCredential,
   validateToken,
   validateIsAdim,
   validateDish,
+  validateDishes,
 };

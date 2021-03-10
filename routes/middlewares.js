@@ -29,6 +29,18 @@ Event: invoked from apiUser endpoint /apiv1/users/login
 */
 
 async function validateUserCredential(req, res, next) {
+  if (
+    req.body.email == undefined ||
+    req.body.email == null ||
+    req.body.login_password == undefined ||
+    req.body.login_password == null
+  ) {
+    return res.status(422).json({
+      status: 422,
+      error: "Required email and password!!",
+    });
+  }
+
   let user = await usersEntity.findOne({
     where: { email: req.body.email },
   });
@@ -84,9 +96,10 @@ function validateToken(req, res, next) {
     isvalid = jsonWebToken.verify(token, process.env.PRIVATE_KEY);
   } catch (error) {
     return res.status(401).send({
-      meta:{
-      status: 401,
-      message: "Invalid token!!"},
+      meta: {
+        status: 401,
+        message: "Invalid token!!",
+      },
       error: {
         name: error.name,
         message: error.message,
@@ -157,6 +170,12 @@ apiOrders endpoint/apiv1/orders/newOrder"
 */
 
 async function validateDishes(req, res, next) {
+  if (req.body.order.dishes == undefined || req.body.order.dishes == null) {
+    return res.status(422).json({
+      status: 422,
+      error: "Required dishes",
+    });
+  }
   let dishes = req.body.order.dishes;
   let totalOrder = 0;
   for (let i = 0; i < dishes.length; i++) {
@@ -179,7 +198,7 @@ async function validateDishes(req, res, next) {
         });
       }
     } catch (error) {
-      return res.status(400).json({ status: 400, message: "Failed", error });
+      return res.status(400).json({ status: 400, message: "Failed in create order"});
     }
   }
   req.body.order.dishes = dishes;

@@ -28,7 +28,7 @@ let validator = [
   check("login_password")
     .not()
     .isEmpty()
-    .withMessage("Required")
+    .withMessage("Password is Required")
     .isLength({ min: 6 })
     .withMessage("must be at least 5 chars long!!")
     .matches(/\d/)
@@ -88,15 +88,30 @@ router.post(
   }
 );
 
-router.post("/login", validateUserCredential, async (req, res) => {
-  let token = createToken(req.body.userToken);
-  res.status(200).json({
-    meta: {
-      status: 200,
-      message: "OK",
-    },
-    token,
-  });
-});
+router.post(
+  "/login",
+  [
+    check("email", "Enter valid email!!").isEmail().not().isEmpty(),
+    check("login_password").not().isEmpty().withMessage("Password is Required"),
+  ],
+  validateUserCredential,
+  async (req, res) => {
+    const error = validationResult(req);
+    if (!error.isEmpty()) {
+      return res.status(422).json({
+        status: 422,
+        error: error.array(),
+      });
+    }
+    let token = createToken(req.body.userToken);
+    res.status(200).json({
+      meta: {
+        status: 200,
+        message: "OK",
+      },
+      token,
+    });
+  }
+);
 
 module.exports = router;

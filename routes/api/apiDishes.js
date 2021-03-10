@@ -103,7 +103,7 @@ router.put(
           status: 400,
           message: "Error",
         },
-        error,
+        error: error.parent.message,
       });
     }
   }

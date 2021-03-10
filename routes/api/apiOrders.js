@@ -133,7 +133,7 @@ router.get(
       attributes: ["id", "order_status", "payment_method", "total"],
       where: { id: req.params.id },
     });
-    order.dataValues.ditails = await orderDetailEntity.findAll({
+    order.dataValues.details = await orderDetailEntity.findAll({
       attributes: ["dish_name", "price", "quantity", "total"],
       where: { order_id: req.params.id },
     });

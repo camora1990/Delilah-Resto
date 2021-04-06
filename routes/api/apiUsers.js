@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const jsonWebToken = require("jsonWebToken");
 const bcrypt = require("bcrypt");
-const { body, validationResult, check } = require("express-validator");
+const { validationResult, check } = require("express-validator");
 const {
   validateRegisterUser,
   validateUserCredential,
@@ -60,7 +60,7 @@ router.get("/", validateToken, validateIsAdim, async (req, res) => {
 });
 
 router.post(
-  "/registerUser",
+  "/registerUser/",
   validator,
   validateRegisterUser,
   async (req, res) => {
@@ -89,7 +89,7 @@ router.post(
 );
 
 router.post(
-  "/login",
+  "/login/",
   [
     check("email", "Enter valid email!!").isEmail().not().isEmpty(),
     check("login_password").not().isEmpty().withMessage("Password is Required"),

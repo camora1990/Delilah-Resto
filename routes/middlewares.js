@@ -29,6 +29,7 @@ Event: invoked from apiUser endpoint /apiv1/users/login
 */
 
 async function validateUserCredential(req, res, next) {
+  console.log(req.body);
   if (
     req.body.email == undefined ||
     req.body.email == null ||
@@ -60,14 +61,14 @@ async function validateUserCredential(req, res, next) {
       };
       next();
     } else {
-      return res.status(401.1).json({
-        status: 401.1,
+      return res.status(403).json({
+        status: 403,
         message: "Invalid password!!",
       });
     }
   } else {
-    return res.status(200).json({
-      status: 200,
+    return res.status(403).json({
+      status: 403,
       message: "user not found!!",
     });
   }
@@ -85,8 +86,8 @@ function validateToken(req, res, next) {
   var token = req.headers["authorization"];
   let isvalid;
   if (!token) {
-    return res.status(401).send({
-      status: 401,
+    return res.status(407).send({
+      status: 407,
       message: "No authorization token was found",
     });
   }
@@ -124,8 +125,8 @@ function validateIsAdim(req, res, next) {
   if (req.body.is_admin) {
     next();
   } else {
-    return res.status(401).json({
-      status: 401,
+    return res.status(403).json({
+      status: 403,
       message: "You need administrator permissions!!",
     });
   }

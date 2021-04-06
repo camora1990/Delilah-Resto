@@ -1,0 +1,548 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Delilah-Resto
+  description: >-
+    Este proyecto plantea la creación de un sistema de pedidos online para un
+    restaurante
+  contact:
+    name: Camilo Morales Sanchez
+    email: moorales.camilo@gmial.com
+servers:
+  - url: http://localhost:5000/apiv1
+
+tags: 
+  - name: Users
+    description: Everything about Users
+  - name: Dishes
+    description: Everything about dishes of restaurant
+  - name: Orders
+    description: Everything about orders of restaurant
+paths:
+  /users/:
+    get:
+      tags: 
+        - Users
+      security: 
+        - bearerAuth: []
+      description: "Return all users from system"
+      responses:
+        200:
+          description: list of users
+          content:
+            aplication/json:
+              schema:
+                $ref: '#/components/schemas/user'
+        407:
+          description: No authorization token was found
+          content:
+            aplication/json:
+              schema:
+                $ref: '#/components/schemas/authorization'
+        401:
+          description: Invalid token
+          content:
+            aplication/json:
+              schema:
+                $ref: '#/components/schemas/invalidToken'
+        403:
+          description: access denied
+          content:
+            aplication/json:
+              schema:
+                $ref: '#/components/schemas/authorization'
+  /users/registerUser/:
+    post:
+      tags:
+        - Users
+      requestBody:
+        description: body whit data user
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/registerUser'
+      
+      responses:
+        201:
+          description: user register
+          content:
+            aplication/json:
+              schema:
+                $ref: "#/components/schemas/successfulyRegisterUser"
+        422:
+          description: field required
+          content:
+            aplication/json:
+              schema:
+                $ref: "#/components/schemas/errorBody"
+        200:
+          description: user in data base
+          content:
+            aplication/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: "the user correo24@example.com is registered in the database"
+  /users/login/:
+    post:
+      tags: 
+        - Users
+      requestBody:
+        description: body whit data user
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/login'
+      responses:
+        200:
+          description: user and password is correct
+          content:
+            aplication/json:
+              schema:
+                type: object
+                properties:
+                  meta: 
+                    $ref: "#/components/schemas/meta"
+                  token:
+                    type: string
+                    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImZpcnN0X25hbWUiOiJDYW1pbG8iLCJsYXN0X25"
+        422:
+          description: user and password are required
+          content:
+             aplication/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 422
+                  error:
+                    type: string
+                    example: "Required email and password!!"
+        403:
+          description: error in user or password
+          content:
+             aplication/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 403
+                  error:
+                    type: string
+                    example: user not found!!
+  /dishes/:
+    get:
+      tags:
+        - Dishes
+      security: 
+        - bearerAuth: []
+      description: "return all dishes in data base"
+      responses:
+        200:
+          description: "return all dishes in data base"
+          content:
+            aplication/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    $ref: "#/components/schemas/meta"
+                  dishes:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/dish"
+        401:
+          description: Invalid token
+          content:
+            aplication/json:
+              schema:
+                $ref: '#/components/schemas/invalidToken'
+        403:
+          description: access denied
+          content:
+            aplication/json:
+              schema:
+                $ref: '#/components/schemas/authorization'
+        407:
+          description: No authorization token was found
+          content:
+            aplication/json:
+              schema:
+                $ref: '#/components/schemas/authorization'
+  /dishes/createDish/:
+    post:
+      tags: 
+        - Dishes
+      security: 
+        - bearerAuth: []
+      requestBody:
+        description: body whit data dishes
+        required: true
+        content:
+          aplication/json:
+            schema:
+              $ref: "#/components/schemas/newDishes"
+      responses:
+        200:
+          description: "Return dish was created"
+          content:
+            aplication/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    $ref : "#/components/schemas/meta"
+                  dish:
+                    $ref: "#/components/schemas/dish"
+        422:
+          description: field required
+          content:
+            aplication/json:
+              schema:
+                $ref: "#/components/schemas/errorBody"
+        401:
+          description: Invalid token
+          content:
+            aplication/json:
+              schema:
+                $ref: '#/components/schemas/invalidToken'
+        403:
+          description: access denied
+          content:
+            aplication/json:
+              schema:
+                $ref: '#/components/schemas/authorization'
+        407:
+          description: No authorization token was found
+          content:
+            aplication/json:
+              schema:
+                $ref: '#/components/schemas/authorization'
+  /dishes/deleteDish/{id}:
+    delete:
+      tags: 
+        - Dishes
+      security: 
+        - bearerAuth: []
+      parameters: 
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the dish to delet
+      responses:
+        200:
+          description: retuns dish delete
+          content:
+            aplication/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    $ref: "#/components/schemas/meta"
+                  dish:
+                    $ref: "#/components/schemas/dish"
+        401:
+          description: Invalid token
+          content:
+            aplication/json:
+              schema:
+                $ref: '#/components/schemas/invalidToken'
+        403:
+          description: access denied
+          content:
+            aplication/json:
+              schema:
+                $ref: '#/components/schemas/authorization'
+        407:
+          description: No authorization token was found
+          content:
+            aplication/json:
+              schema:
+                $ref: '#/components/schemas/authorization'
+        422:
+          description: field required
+          content:
+            aplication/json:
+              schema:
+                $ref: "#/components/schemas/errorBody"
+        404:
+          description: the dish  doesn´t exist
+          content:
+            aplication/json:
+              schema:
+                $ref: "#/components/schemas/noFound"
+  /dishes/updateDish/{id}:
+    put:
+      tags: 
+        - Dishes
+      security: 
+        - bearerAuth: []
+      parameters: 
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the dish to update
+      requestBody:
+        description: "Update dish"
+        required: true
+        content:
+          aplication/json:
+            schema:
+              $ref: "#/components/schemas/updateDish"
+              
+      responses:
+        200:
+          description: retuns dish update
+          content:
+            aplication/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    $ref: "#/components/schemas/meta"
+                  dish:
+                    $ref: "#/components/schemas/dish"
+        401:
+          description: Invalid token
+          content:
+            aplication/json:
+              schema:
+                $ref: '#/components/schemas/invalidToken'
+        403:
+          description: access denied
+          content:
+            aplication/json:
+              schema:
+                $ref: '#/components/schemas/authorization'
+        407:
+          description: No authorization token was found
+          content:
+            aplication/json:
+              schema:
+                $ref: '#/components/schemas/authorization'
+        404:
+          description: the dish  doesn´t exist
+          content:
+            aplication/json:
+              schema:
+                $ref: "#/components/schemas/noFound"
+components:
+  schemas:
+    user:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            status:
+              type: integer
+              example: 200
+            message:
+              type: string
+              example: "OK"
+        users:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                example: 1
+              first_name:
+                type: string
+                example: "Camilo"
+              last_name:
+                type: string
+                example: "Morales"
+              email:
+                type: string
+                example: "correo1@example.com"
+              phone_number: 
+                type: string
+                example: "3146582222"
+              home_address:
+                type: string
+                example: "calle 68 # 00-00"
+              is_admin:
+                type: boolean
+                example: tru
+    authorization:
+      type: object
+      properties:
+        status:
+          type: integer
+          example: null
+        message: 
+          type: string
+          example: "type response"
+    invalidToken:
+      type: object
+      properties:
+        meta:
+          $ref: '#/components/schemas/meta'
+        error:
+          $ref: "#/components/schemas/error"
+        
+    meta:
+      type: object
+      properties:
+        status:
+          type: integer
+          example: 
+        message: 
+          type: string
+          example: "type response"
+    error:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "TokenExpiredError"
+        message: 
+          type: string
+          example: "jwt expired"
+    registerUser:
+      type: object
+      properties:
+        first_name:
+          type: string
+          example: "Camilo"
+        last_name:
+          type: string
+          example: "Morales Sanchez"
+        email:
+          type: string
+          example: "correo@gmail.com"
+        phone_number:
+          type: string
+          example: "3146582011"
+        home_address:
+          type: string
+          example: "calle 68 # 00-00"
+        login_password:
+          type: string
+          example: "abcdefghi1234"
+    login:
+      type: object
+      properties:
+        email:
+          type: string
+          example: correo1@example.com
+        login_password:
+          type: string
+          example: zaaahaffahh12
+    successfulyRegisterUser:
+      type: object
+      properties:
+        meta:
+          $ref: '#/components/schemas/meta'
+        user:
+          type: object
+          properties:
+            id:
+              type: integer
+              example: 1
+            fullName:
+              type: string
+              example: "Camilo Morales Sanchez"
+            user:
+              type: string
+              example: "correo@example.com"
+    errorBody:
+      type: object
+      properties:
+        status:
+          type: integer
+          example: 422
+        error:
+          type: array
+          items:
+            type: object
+            properties:
+              value: 
+                type: string
+                example: ""
+              msg:
+                type: string
+                example: "First name is required!!"
+              param:
+                type: string
+                example: "first_name"
+              location:
+                type: string
+                example: "body"
+    dish: 
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name_dish:
+          type: string
+          example: "Bagel de salmon # 1"
+        price:
+          type: number
+          format: float
+          example: 425
+        description:
+          type: string
+          example: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took"
+        createdAt:
+          type: string
+          example: "2021-03-02T00:13:09.369Z"
+        updatedAt:
+          type: string
+          example: "2021-03-02T00:13:09.369Z"
+    newDishes:
+      type: object
+      properties:
+        name_dish:
+          type: string
+          example: "Dish #1"
+        price:
+          type: number
+          format: float
+          example: 400.2
+        description:
+          type: string
+          example: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took"
+    updateDish:
+      type: object
+      properties:
+        name_dish:
+          type: string
+          example: "dish # 1"
+        price:
+          type: number
+          format: float
+          example: 1205.25
+        description:
+          type: string
+          example: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took"
+    noFound:
+      type: object
+      properties:
+        status:
+          type: integer
+          example: null
+        message:
+          type: string
+          example: "Lorem Ipsum is simply dummy text of the printing and typesettin"
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

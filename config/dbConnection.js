@@ -19,6 +19,7 @@ const sequelize = new Sequelize(BD_NAME, BD_USER, BD_PASSWORD, {
   },
 });
 
+
 //created the models in database
 const usersEntity = userModel(sequelize, Sequelize);
 const orderEntity = orderModel(sequelize, Sequelize);

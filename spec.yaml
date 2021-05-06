@@ -30,25 +30,25 @@ paths:
         200:
           description: list of users
           content:
-            aplication/json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/user'
         407:
           description: No authorization token was found
           content:
-            aplication/json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/authorization'
         401:
           description: Invalid token
           content:
-            aplication/json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/invalidToken'
         403:
           description: access denied
           content:
-            aplication/json:
+            appication/json:
               schema:
                 $ref: '#/components/schemas/authorization'
   /users/registerUser/:
@@ -67,19 +67,19 @@ paths:
         201:
           description: user register
           content:
-            aplication/json:
+            application/json:
               schema:
                 $ref: "#/components/schemas/successfulyRegisterUser"
         422:
           description: field required
           content:
-            aplication/json:
+            appication/json:
               schema:
                 $ref: "#/components/schemas/errorBody"
         200:
           description: user in data base
           content:
-            aplication/json:
+            application/json:
               schema:
                 type: object
                 properties:
@@ -104,7 +104,7 @@ paths:
         200:
           description: user and password is correct
           content:
-            aplication/json:
+            application/json:
               schema:
                 type: object
                 properties:
@@ -116,7 +116,7 @@ paths:
         422:
           description: user and password are required
           content:
-             aplication/json:
+             application/json:
               schema:
                 type: object
                 properties:
@@ -129,7 +129,7 @@ paths:
         403:
           description: error in user or password
           content:
-             aplication/json:
+             application/json:
               schema:
                 type: object
                 properties:
@@ -150,7 +150,7 @@ paths:
         200:
           description: "return all dishes in data base"
           content:
-            aplication/json:
+            application/json:
               schema:
                 type: object
                 properties:
@@ -163,19 +163,19 @@ paths:
         401:
           description: Invalid token
           content:
-            aplication/json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/invalidToken'
         403:
           description: access denied
           content:
-            aplication/json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/authorization'
         407:
           description: No authorization token was found
           content:
-            aplication/json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/authorization'
   /dishes/createDish/:
@@ -188,14 +188,14 @@ paths:
         description: body whit data dishes
         required: true
         content:
-          aplication/json:
+          application/json:
             schema:
               $ref: "#/components/schemas/newDishes"
       responses:
         200:
           description: "Return dish was created"
           content:
-            aplication/json:
+            application/json:
               schema:
                 type: object
                 properties:
@@ -206,25 +206,25 @@ paths:
         422:
           description: field required
           content:
-            aplication/json:
+            application/json:
               schema:
                 $ref: "#/components/schemas/errorBody"
         401:
           description: Invalid token
           content:
-            aplication/json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/invalidToken'
         403:
           description: access denied
           content:
-            aplication/json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/authorization'
         407:
           description: No authorization token was found
           content:
-            aplication/json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/authorization'
   /dishes/deleteDish/{id}:
@@ -244,7 +244,7 @@ paths:
         200:
           description: retuns dish delete
           content:
-            aplication/json:
+            application/json:
               schema:
                 type: object
                 properties:
@@ -255,31 +255,31 @@ paths:
         401:
           description: Invalid token
           content:
-            aplication/json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/invalidToken'
         403:
           description: access denied
           content:
-            aplication/json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/authorization'
         407:
           description: No authorization token was found
           content:
-            aplication/json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/authorization'
         422:
           description: field required
           content:
-            aplication/json:
+            application/json:
               schema:
                 $ref: "#/components/schemas/errorBody"
         404:
           description: the dish  doesn´t exist
           content:
-            aplication/json:
+            application/json:
               schema:
                 $ref: "#/components/schemas/noFound"
   /dishes/updateDish/{id}:
@@ -299,7 +299,7 @@ paths:
         description: "Update dish"
         required: true
         content:
-          aplication/json:
+          application/json:
             schema:
               $ref: "#/components/schemas/updateDish"
               
@@ -307,7 +307,7 @@ paths:
         200:
           description: retuns dish update
           content:
-            aplication/json:
+            application/json:
               schema:
                 type: object
                 properties:
@@ -318,27 +318,184 @@ paths:
         401:
           description: Invalid token
           content:
-            aplication/json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/invalidToken'
         403:
           description: access denied
           content:
-            aplication/json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/authorization'
         407:
           description: No authorization token was found
           content:
-            aplication/json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/authorization'
         404:
           description: the dish  doesn´t exist
           content:
-            aplication/json:
+            application/json:
               schema:
                 $ref: "#/components/schemas/noFound"
+  /orders/newOrder/:
+    post:
+      tags: 
+        - Orders
+      security: 
+        - bearerAuth: []
+      requestBody:
+        description: Body with order
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/newOrder"
+      responses:
+        200:
+          description: order created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    $ref: "#/components/schemas/meta"
+                  order:
+                    $ref: "#/components/schemas/order"
+        422:
+          description: wrong body
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorBody"
+        400:
+          description: Failed in create order
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/meta"
+        401:
+          description: Invalid token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/invalidToken'
+                
+        404:
+          description: the dish  doesn´t exist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/noFound"
+        407:
+          description: No authorization token was found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/authorization'
+  /orders/updateOrder/{id}:
+    put:
+      tags: 
+        - Orders
+      security: 
+        - bearerAuth: []
+      parameters: 
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the order to update
+      requestBody:
+        description: Body with order status
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                order_status:
+                  type: string
+                  enum: ["CONFIRMED", "PREPARING", "SENT", "CANCELLED", "DELIVERED","NEW"]
+                  example: "NEW"
+      responses:
+        200:
+          description: order update
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    $ref: "#/components/schemas/meta"
+                  order:
+                    $ref: "#/components/schemas/orderUpdate"
+        422:
+          description: wrong body
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorBody"
+        401:
+          description: Invalid token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/invalidToken'
+        403:
+          description: access denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/authorization'
+        407:
+          description: No authorization token was found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/authorization'          
+  /orders/{id}:
+    get:
+      tags: 
+        - Orders
+      security: 
+       - bearerAuth: []
+      description: return order details
+      parameters: 
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+        description: numeric ID to order
+      responses:
+        200:
+          description: return order details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/orderDetails"
+        401:
+          description: Invalid token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/invalidToken'
+        403:
+          description: access denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/authorization'
+        407:
+          description: No authorization token was found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/authorization'
+      
 components:
   schemas:
     user:
@@ -532,6 +689,69 @@ components:
         description:
           type: string
           example: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took"
+    newOrder:
+      type: object
+      properties:
+        order:
+          type: object
+          properties:
+            payment_method:
+              type: string
+              enum: ["CARD", "CASH"]
+            dishes:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 1
+                  quantity:
+                    type: integer
+                    example: 1
+              
+    order:
+      type: object
+      properties:
+        order_status:
+          type: string
+          example: "NEW"
+        id:
+          type: integer
+          example: 1
+        user_id:
+          type: integer
+          example: 1
+        payment_method:
+          type: string
+          example: "CARD"
+        total:
+          type: number
+          format: float
+          example: 6325.0
+        updatedAt:
+          type: string
+          example: "2021-04-08T00:01:12.058Z"
+        createdAt:
+          type: string
+          example: "2021-04-08T00:01:12.058Z"
+    orderUpdate:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        order_status:
+          type: string
+          example: "PREPARING"
+        payment_method:
+          type: string
+          example: "CARD"
+        total:
+          type: number
+          format: float
+          example: 000.0
+        
     noFound:
       type: object
       properties:
@@ -541,6 +761,55 @@ components:
         message:
           type: string
           example: "Lorem Ipsum is simply dummy text of the printing and typesettin"
+    orderDetails:
+      type: object
+      properties:
+        meta:
+          $ref: "#/components/schemas/meta"
+        order:
+          type: object
+          properties:
+            order_status:
+              type: string
+              example: "NEW"
+            id:
+              type: integer
+              example: 1
+            user_id:
+              type: integer
+              example: 1
+            payment_method:
+              type: string
+              example: "CARD"
+            total:
+              type: number
+              format: float
+              example: 6325.0
+            updatedAt:
+              type: string
+              example: "2021-04-08T00:01:12.058Z"
+            createdAt:
+              type: string
+              example: "2021-04-08T00:01:12.058Z"
+            details:
+              type: array
+              items:
+                type: object
+                properties:
+                  dish_name:
+                    type: string
+                    example: "Bagel de salmon # 1"
+                  price:
+                    type: number
+                    format: float
+                    example: 425.5
+                  quatity:
+                    type: integer
+                    example: 3
+                  total:
+                    type: number
+                    format: float
+                    example: 1275.5
   securitySchemes:
     bearerAuth:
       type: http

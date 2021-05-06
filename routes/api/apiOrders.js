@@ -20,9 +20,9 @@ let validatorUpdateDish = [
   check("order_status")
     .not()
     .isEmpty()
-    .isIn(["CONFIRMED", "PREPARING", "SENT", "CANCELLED", "DELIVERED"])
+    .isIn(["CONFIRMED", "PREPARING", "SENT", "CANCELLED", "DELIVERED", "NEW"])
     .withMessage(
-      "Invalid options [CONFIRMED or PREPARING or SENT or CANCELLED or DELIVERED ]"
+      "Invalid options [CONFIRMED or PREPARING or SENT or CANCELLED or DELIVERED or NEW]"
     ),
 ];
 
@@ -129,22 +129,38 @@ router.get(
         error: error.array(),
       });
     }
+    console.log(req.params.id);
     let order = await orderEntity.findOne({
-      attributes: ["id", "order_status", "payment_method", "total"],
+      attributes: [
+        "order_status",
+        "id",
+        "user_id",
+        "payment_method",
+        "total",
+        "updatedAt",
+        "createdAt",
+      ],
       where: { id: req.params.id },
     });
-    order.dataValues.details = await orderDetailEntity.findAll({
-      attributes: ["dish_name", "price", "quantity", "total"],
-      where: { order_id: req.params.id },
-    });
-    res.status(200).json({
-      meta: {
-        status: 200,
-        message: "Ok",
-      },
+    if (order) {
+      order.dataValues.details = await orderDetailEntity.findAll({
+        attributes: ["dish_name", "price", "quantity", "total"],
+        where: { order_id: req.params.id },
+      });
+      res.status(200).json({
+        meta: {
+          status: 200,
+          message: "Ok",
+        },
 
-      order,
-    });
+        order,
+      });
+    } else {
+      res.status(404).json({
+        status: 404,
+        message: "Order not found",
+      });
+    }
   }
 );
 

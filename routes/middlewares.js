@@ -181,7 +181,8 @@ async function validateDishes(req, res, next) {
   let totalOrder = 0;
   for (let i = 0; i < dishes.length; i++) {
     try {
-      let tempDish = await dishEntity.findOne({ where: { id: dishes[i].id } });
+      if (dishes[i].quantity >0) {
+        let tempDish = await dishEntity.findOne({ where: { id: dishes[i].id } });
       if (tempDish) {
         dishes[i] = {
           dish_name: tempDish.name_dish,
@@ -193,11 +194,15 @@ async function validateDishes(req, res, next) {
         };
         totalOrder += tempDish.price * dishes[i].quantity;
       } else {
-        return res.status(20).json({
-          status: 200,
+        return res.status(404).json({
+          status: 404,
           message: `Dish with id:${dishes[i].id} is not in data base`,
         });
       }
+      } else {
+        return res.status(400).json({ status: 400, message: "Quantity is required"});
+      }
+      
     } catch (error) {
       return res.status(400).json({ status: 400, message: "Failed in create order"});
     }

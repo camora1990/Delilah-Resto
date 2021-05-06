@@ -18,6 +18,7 @@ tags:
     description: Everything about dishes of restaurant
   - name: Orders
     description: Everything about orders of restaurant
+
 paths:
   /users/:
     get:
@@ -552,7 +553,6 @@ components:
           $ref: '#/components/schemas/meta'
         error:
           $ref: "#/components/schemas/error"
-        
     meta:
       type: object
       properties:
@@ -592,6 +592,9 @@ components:
         login_password:
           type: string
           example: "abcdefghi1234"
+        is_admin:
+          type: boolean
+          example: true
     login:
       type: object
       properties:
@@ -709,7 +712,6 @@ components:
                   quantity:
                     type: integer
                     example: 1
-              
     order:
       type: object
       properties:
@@ -751,7 +753,6 @@ components:
           type: number
           format: float
           example: 000.0
-        
     noFound:
       type: object
       properties:

@@ -9,16 +9,15 @@ const orderDetailModel = require("../models/order_details");
 const BD_NAME = process.env.BD_NAME;
 const BD_USER = process.env.BD_USER;
 const BD_PASSWORD = process.env.BD_PASSWORD;
+const BD_DIALECT = process.env.BD_DIALECT;
+const BD_PORT = process.env.BD_PORT;
+const BD_HOST = process.env.BD_HOST;
 
 const sequelize = new Sequelize(BD_NAME, BD_USER, BD_PASSWORD, {
-  dialect: "mssql",
-  host: "localhost",
-  port: 1433,
-  dialectOptions: {
-    useUTC: true,
-  },
+  dialect: BD_DIALECT,
+  host: BD_HOST,
+  port: BD_PORT,
 });
-
 
 //created the models in database
 const usersEntity = userModel(sequelize, Sequelize);

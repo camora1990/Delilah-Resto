@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "c18da9fc-2197-4bf3-b3db-281083fdda7d",
+		"_postman_id": "80fc1ee9-42d9-4338-8439-6407dfffe91d",
 		"name": "OnlineOrdeingSystem",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -361,6 +361,43 @@
 						"apiv1",
 						"orders",
 						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE ORDER",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer ",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/apiv1/orders/deleteOrder/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"apiv1",
+						"orders",
+						"deleteOrder",
+						""
 					]
 				}
 			},

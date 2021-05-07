@@ -101,6 +101,7 @@ http://localhost:5000/apiv1/dishes/updateDish/
 http://localhost:5000/apiv1/orders/newOrder/
 http://localhost:5000/apiv1/orders/updateOrder/
 http://localhost:5000/apiv1/orders/
+http://localhost:5000/apiv1/orders/deleteOrder/
 
 
 # Postman

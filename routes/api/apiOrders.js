@@ -7,8 +7,18 @@ const {
   validateToken,
   validateIsAdim,
   validateDishes,
+  validateOrder,
 } = require("../middlewares");
 const { check, validationResult, param } = require("express-validator");
+
+let validatorParamId = [
+  param("id")
+    .not()
+    .isEmpty()
+    .withMessage("id is required!!")
+    .isInt()
+    .withMessage("Invalid type to Id!!"),
+];
 
 let validatorUpdateDish = [
   param("id")
@@ -72,6 +82,36 @@ router.post(
         message: "Order was create successfully!!",
       },
       order: newOrder,
+    });
+  }
+);
+
+router.delete(
+  "/deleteOrder/:id",
+  validatorParamId,
+  validateToken,
+  validateIsAdim,
+  validateOrder,
+  async (req, res) => {
+    const error = validationResult(req);
+    if (!error.isEmpty()) {
+      return res.status(422).json({
+        status: 422,
+        error: error.array(),
+      });
+    }
+
+    await orderEntity.destroy({
+      where: {
+        id: req.params.id,
+      },
+    });
+    res.status(200).json({
+      meta: {
+        status: 200,
+        message: "Order was removed successfully!!",
+      },
+      order: req.body.order,
     });
   }
 );

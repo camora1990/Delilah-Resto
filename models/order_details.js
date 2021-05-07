@@ -20,5 +20,6 @@ module.exports = (sequelize, DataTypes) => {
       require: true,
     },
     total: { type: DataTypes.DECIMAL(6, 2), allowNull: false, notNull: true },
+
   });
 };

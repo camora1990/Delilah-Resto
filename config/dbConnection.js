@@ -31,7 +31,7 @@ const orderDetailEntity = orderDetailModel(sequelize, Sequelize);
 usersEntity.hasMany(orderEntity, { foreignKey: "user_id" });
 dishEntity.hasMany(orderDetailEntity, { foreignKey: "dish_id" });
 orderEntity.hasMany(orderDetailEntity, {
-  foreignKey: "order_id",
+  foreignKey: "order_id",onDelete:'Cascade'
 });
 
 sequelize

@@ -1,7 +1,7 @@
 const bcrypt = require("bcrypt");
 const jsonWebToken = require("jsonWebToken");
 
-const { usersEntity } = require("../config/dbConnection");
+const { usersEntity, orderEntity } = require("../config/dbConnection");
 const { dishEntity } = require("../config/dbConnection");
 
 /*
@@ -164,6 +164,37 @@ async function validateDish(req, res, next) {
 }
 
 /*
+functions: validate if order is in data base
+Author: Camilo Morales Sanchez.
+Event: invoked from:
+apiDishes endpoint/apiv1/order/deleteOrder/
+*/
+
+async function validateOrder(req, res, next) {
+  let order;
+  if (Number.isNaN(parseInt(req.params.id))) {
+    return next();
+  }
+
+  try {
+    order = await orderEntity.findOne({ where: { id: req.params.id } });
+    if (order) {
+      req.body.order = order;
+      next();
+    } else {
+      return res.status(404).json({
+        status: 404,
+        message: `the order with id: ${req.params.id} doesn´t exist`,
+      });
+    }
+  } catch (error) {
+    return res
+      .status(404)
+      .json({ status: 404, message: "Failed", error: error.parent.message });
+  }
+}
+
+/*
 functions: validate if dishes is in data base and are correct data
 Author: Camilo Morales Sanchez.
 Event: invoked from:
@@ -218,5 +249,5 @@ module.exports = {
   validateToken,
   validateIsAdim,
   validateDish,
-  validateDishes,
+  validateDishes,validateOrder
 };

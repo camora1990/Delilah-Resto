@@ -496,7 +496,62 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/authorization'
-      
+  /orders/deleteOrder/{id}:
+    delete:
+      tags: 
+        - Orders
+      security: 
+        - bearerAuth: []
+      parameters: 
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the order to delete
+      responses:
+        200:
+          description: Delete order and order details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    $ref: "#/components/schemas/meta"
+                  order:
+                    $ref: "#/components/schemas/order"
+        401:
+          description: Invalid token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/invalidToken'
+        403:
+          description: access denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/authorization'
+        407:
+          description: No authorization token was found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/authorization'
+        422:
+          description: field required
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorBody"
+        404:
+          description: the order  doesn´t exist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/noFound"
+
 components:
   schemas:
     user:

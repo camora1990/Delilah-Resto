@@ -4,12 +4,13 @@
 Git clone https://github.com/camora1990/Delilah-Resto.git
 
 2.	Una vez clonado el proyecto ejecutar el comando para instalación de paquetes y dependencias dentro de la carpeta del proyecto.
+
 Npm install
 
 3.	Crear base de datos en MySQL o SQL server el que sea de su preferencia, solo es necesario crear la base de datos pues el programa creara automáticamente las tablas que serán usadas. A continuación, se sugiere crear la base con el nombre OnlineOrderingSystem si desea este puede ser cambiado.
+
 CREATE DATABASE OnlineOrderingSystem
 
-# Nota: si desea crear todas las tablas y la base de datos completa de una vez, ejecutar el script que se encuentra en el archivo scriptCreateDataBase.sql solo aplica para Mssql (SQL server), este script tiene pre-poblada la tabla dishes con unos platos.
 
 #Creación variables de entorno
 
